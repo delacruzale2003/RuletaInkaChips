@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Settings, Gamepad2, MapPin } from 'lucide-react'; 
+import { Settings,  MapPin } from 'lucide-react'; 
 
 const ExitPage: React.FC = () => {
     const location = useLocation();
