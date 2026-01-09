@@ -180,118 +180,154 @@ export default function Registross() {
     // --- RENDERIZADO ---
     return (
         <div className="p-4 bg-black min-h-screen">
-            <h1 className="text-2xl font-bold text-gray-100 mb-4">
-                Registros de premios: {campaignName}
-            </h1>
+            <div className="max-w-6xl mx-auto">
+                
+                {/* CABECERA Y DESCRIPCIÓN */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-100 mb-2 text-center md:text-left">
+                        Registros de premios: <span className="text-[#5dc4c0]">{campaignName}</span>
+                    </h1>
+                    <p className="text-gray-400 text-sm md:text-base text-center md:text-left leading-relaxed">
+                        Esta tabla muestra los registros de participantes en <strong>tiempo real</strong>. 
+                        Puedes utilizar el selector de abajo para <strong>filtrar por una tienda específica</strong>. 
+                        Además, tienes la opción de <strong>exportar los datos a Excel</strong> para tus reportes.
+                    </p>
+                </div>
 
-            <div className="flex gap-4 mb-6 flex-wrap">
-                {/* Botón Negro (Campaña Completa) */}
-                <button
-                    onClick={handleDescargarCampaña}
-                    className="flex items-center gap-3 px-4 py-2.5 bg-gray-100 text-black hover:border rounded-full hover:bg-black transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 hover:text-white"
-                >
-                    <CircleArrowDown size={20} strokeWidth={1.5} />
-                    <span className="font-medium">Descargar campaña completa</span>
-                </button>
-
-                {/* Botón Blanco (Tienda Seleccionada) */}
-                <button
-                    onClick={handleDescargarTienda}
-                    disabled={!tiendaSeleccionada}
-                    className="flex items-center gap-3 px-6 py-2.5 bg-white text-gray-900 border border-gray-200 rounded-full hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 hover:text-white"
-                >
-                    <CircleArrowDown size={20} strokeWidth={1.5} />
-                    <span className="font-medium">
-                        Descargar tienda {tiendaSeleccionada ? `(${tiendasUnicas.find(t => t.id === tiendaSeleccionada)?.name})` : ''}
-                    </span>
-                </button>
-            </div>
-            <div className="max-w-sm mb-4">
-                <label className="block text-sm text-white mb-1">Filtrar por tienda</label>
-                <select
-                    value={tiendaSeleccionada}
-                    // Al cambiar el filtro, solo actualizamos el estado, y el useEffect se encarga de llamar a fetchRegistros
-                    onChange={(e) => { setTiendaSeleccionada(e.target.value); }}
-                    className="w-full px-3 py-2 rounded-md border border-gray-300 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option value="">Todas las tiendas ({campaignName})</option>
-                    {tiendasUnicas.map((t) => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="overflow-x-auto bg-white rounded-lg shadow">
-                {cargando ? (
-                    <div className="p-8 text-center text-gray-500 font-medium">Cargando registros...</div>
-                ) : (
-                    <motion.div
-                        key={tiendaSeleccionada || 'all'}
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
+                {/* BOTONES DE DESCARGA */}
+                <div className="flex flex-col md:flex-row gap-4 mb-8 flex-wrap justify-center md:justify-start">
+                    {/* Botón Negro (Campaña Completa) - Mantenemos estilo oscuro para contraste con la página */}
+                    <button
+                        onClick={handleDescargarCampaña}
+                        className="flex items-center justify-center gap-3 px-5 py-3 bg-gray-800 text-white border border-gray-700 rounded-xl hover:bg-gray-700 hover:border-gray-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 w-full md:w-auto group"
                     >
-                        <table className="min-w-full">
-                            <thead className="bg-gray-200 border-b">
-                                <tr className="text-center text-xs font-bold text-gray-600 uppercase tracking-wider">
-                                    <th className="p-3">Tienda</th><th className="p-3">Premio</th><th className="p-3">Fecha</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {registros.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={7} className="p-4 text-center text-gray-500">No se encontraron registros.</td>
-                                    </tr>
-                                ) : registros.map((r) => (
-                                    <tr key={r.id} className="hover:bg-gray-50 text-sm text-gray-700 text-center">
-                                        <td className="p-2">{r.store_name ?? <span className="text-red-400">Desconocida</span>}</td>
-                                        
-                                        
-                                       
-                                        
-                                        <td className="p-2">
-                                            {r.prize_name ? (
-                                                <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-bold">
-                                                    {r.prize_name}
-                                                </span>
-                                            ) : (
-                                                <span className="bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full text-xs">
-                                                    No ganó
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="p-2 text-xs text-gray-500">{convertirFechaPeru(r.created_at)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </motion.div>
-                )}
+                        <CircleArrowDown size={20} strokeWidth={1.5} className="group-hover:text-[#5dc4c0] transition-colors" />
+                        <span className="font-medium">Descargar Campaña Completa</span>
+                    </button>
+
+                    {/* Botón Cyan (Tienda Seleccionada) */}
+                    <button
+                        onClick={handleDescargarTienda}
+                        disabled={!tiendaSeleccionada}
+                        className="flex items-center justify-center gap-3 px-5 py-3 bg-[#5dc4c0] text-white font-bold rounded-xl hover:brightness-110 disabled:bg-gray-800 disabled:text-gray-500 disabled:border disabled:border-gray-700 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-[0_0_15px_rgba(93,196,192,0.4)] hover:-translate-y-0.5 active:translate-y-0 w-full md:w-auto"
+                    >
+                        <CircleArrowDown size={20} strokeWidth={2} />
+                        <span className="">
+                            Descargar Tienda {tiendaSeleccionada ? `(${tiendasUnicas.find(t => t.id === tiendaSeleccionada)?.name})` : ''}
+                        </span>
+                    </button>
+                </div>
+
+                {/* FILTRO */}
+                <div className="mb-6 mx-auto md:mx-0 max-w-sm">
+                    <label className="block text-sm font-medium text-gray-300 mb-2 ml-1">Filtrar vista por tienda:</label>
+                    <div className="relative">
+                        <select
+                            value={tiendaSeleccionada}
+                            onChange={(e) => { setTiendaSeleccionada(e.target.value); }}
+                            className="w-full px-4 py-3 rounded-xl border border-gray-700 text-white bg-gray-900 focus:outline-none focus:ring-2 focus:ring-[#5dc4c0] focus:border-transparent appearance-none cursor-pointer hover:bg-gray-800 transition-colors"
+                        >
+                            <option value="">Todas las tiendas ({campaignName})</option>
+                            {tiendasUnicas.map((t) => (
+                                <option key={t.id} value={t.id}>{t.name}</option>
+                            ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                {/* TABLA DE DATOS (Fondo Blanco) */}
+                <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
+                    <div className="overflow-x-auto">
+                        {cargando ? (
+                            <div className="p-12 text-center">
+                                <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#5dc4c0] mb-2"></div>
+                                <div className="text-gray-500 font-medium">Cargando registros...</div>
+                            </div>
+                        ) : (
+                            <motion.div
+                                key={tiendaSeleccionada || 'all'}
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
+                            >
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    {/* Cabecera Gris Clara */}
+                                    <thead className="bg-gray-100">
+                                        <tr>
+                                            <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Tienda</th>
+                                            
+                                            <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Premio</th>
+                                            <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    {/* Cuerpo Blanco */}
+                                    <tbody className="bg-white divide-y divide-gray-100">
+                                        {registros.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={4} className="px-6 py-8 text-center text-gray-500 italic">
+                                                    No se encontraron registros para esta selección.
+                                                </td>
+                                            </tr>
+                                        ) : registros.map((r) => (
+                                            <tr key={r.id} className="hover:bg-gray-50 transition-colors duration-150">
+                                                <td className="px-6 py-4 whitespace-nowrap text-left md:text-center">
+                                                    <div className="text-sm font-semibold text-gray-800">{r.store_name ?? <span className="text-red-500">Desconocida</span>}</div>
+                                                </td>
+                                                
+                                                <td className="px-6 py-4 whitespace-nowrap text-left md:text-center">
+                                                    {r.prize_name ? (
+                                                        // Badge Ganador: Fondo Cyan Sólido con texto blanco
+                                                        <span className="bg-[#5dc4c0] text-white px-3 py-1 rounded-full text-xs font-bold inline-block shadow-sm">
+                                                            {r.prize_name}
+                                                        </span>
+                                                    ) : (
+                                                        // Badge No Ganó: Gris claro
+                                                        <span className="bg-gray-100 text-gray-400 px-3 py-1 rounded-full text-xs font-medium inline-block border border-gray-200">
+                                                            No ganó
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-left md:text-center text-gray-900 text-sm font-mont-bold">
+                                                    {convertirFechaPeru(r.created_at)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </motion.div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex justify-center items-center gap-2 mt-6 pb-8 text-gray-500 text-sm">
+                    <span>Mostrando los últimos</span>
+                    <span className="font-bold text-gray-300">{registros.length}</span>
+                    <span>registros</span>
+                </div>
             </div>
 
-            <div className="flex justify-center items-center gap-4 mt-6">
-                <span className="text-white text-sm">Mostrando {registros.length} últimos registros</span>
-            </div>
-
-            {/* MODAL DE FOTO (Zoom) */}
+            {/* MODAL DE FOTO (Zoom) - Se mantiene igual */}
             {modalFoto && (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setModalFoto(null)}>
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setModalFoto(null)}>
                     <motion.div
-                        className="relative bg-white p-2 rounded-lg max-w-3xl max-h-[90vh] overflow-auto"
-                        initial={{ opacity: 0, scale: 0.9 }}
+                        className="relative bg-white p-2 rounded-2xl max-w-3xl max-h-[90vh] overflow-auto shadow-2xl"
+                        initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
                             onClick={() => setModalFoto(null)}
-                            className="absolute top-2 right-2 bg-gray-200 rounded-full p-1 hover:bg-gray-300 text-gray-800 transition z-10"
+                            className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full p-2 transition-colors z-10 shadow-sm"
                         >
-                            <IconX size={20} />
+                            <IconX size={24} />
                         </button>
                         <img
                             src={modalFoto}
                             alt="Zoom"
-                            className="w-full h-auto block max-w-full max-h-[85vh]"
+                            className="w-full h-auto block max-w-full max-h-[85vh] rounded-xl"
                         />
                     </motion.div>
                 </div>
