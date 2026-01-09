@@ -143,7 +143,7 @@ export default function Registross() {
             XLSX.writeFile(libro, `registros_${campaignName}_completo.xlsx`);
         } catch (err) {
             console.error('Error al descargar campaña:', err);
-            alert('Error al descargar. Revisa la consola.');
+            alert('Error al descargar. Revisa la consola.'); 
         }
     };
 
@@ -191,7 +191,7 @@ export default function Registross() {
                     className="flex items-center gap-3 px-4 py-2.5 bg-gray-100 text-black hover:border rounded-full hover:bg-black transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 hover:text-white"
                 >
                     <CircleArrowDown size={20} strokeWidth={1.5} />
-                    <span className="font-medium">Descargar campaña</span>
+                    <span className="font-medium">Descargar campaña completa</span>
                 </button>
 
                 {/* Botón Blanco (Tienda Seleccionada) */}
