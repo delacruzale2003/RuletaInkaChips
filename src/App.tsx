@@ -2,14 +2,16 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage';
 import ExitPage from './pages/ExitPage';
 import Tienda from './pages/Tiendas';
-import Home from './pages/Home'; // Importamos tu nueva página Home
+import Home from './pages/Home'; 
+ // <--- 1. Importa tu nuevo componente
 import './App.css';
+import Registross from './pages/Registros';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 1. Ruta Raíz: Si la URL está vacía, muestra el Home */}
+        {/* 1. Ruta Raíz */}
         <Route path="/" element={<Home />} />
 
         {/* 2. Ruta de Configuración / Selección de Tienda */}
@@ -18,14 +20,18 @@ function App() {
         {/* 3. Ruta de Salida */}
         <Route path="/exit" element={<ExitPage />} />
 
-        {/* 4. Ruta Dinámica con storeId: 
-             Si la URL tiene algo (ej: /105), abre el registro/ruleta.
+        {/* 4. Ruta de Visualización de Registros 
+             IMPORTANTE: Debe ir antes que /:storeId 
+        */}
+        <Route path="/registros" element={<Registross />} />
+
+        {/* 5. Ruta Dinámica con storeId: 
+             Cualquier texto que no sea 'tiendas', 'exit' o 'registros'
+             será interpretado como un ID de tienda.
         */}
         <Route path="/:storeId" element={<RegisterPage />} />
 
-        {/* 5. Redirección de seguridad: 
-             Si escriben algo que no existe después de una ruta conocida 
-        */}
+        {/* 6. Redirección de seguridad */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

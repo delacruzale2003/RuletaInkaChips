@@ -1,13 +1,12 @@
 import React from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Settings } from 'lucide-react';
+import { Settings, Menu } from 'lucide-react';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
     const { storeId: paramStoreId } = useParams<{ storeId: string }>();
     const [searchParams] = useSearchParams();
 
-    // Mantenemos la lógica de storeId para que el flujo no se pierda
     const activeStoreId = paramStoreId || searchParams.get("store");
 
     const goToStores = () => {
@@ -18,26 +17,46 @@ const Home: React.FC = () => {
         }
     };
 
+    const goToRegistros = () => {
+        navigate('/registros'); // Ajusta esta ruta según tu App.tsx
+    };
+
     return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
-            {/* Contenedor del Logo */}
-            <div className="mb-8">
+        <div className="relative min-h-screen bg-black flex flex-col items-center justify-center p-4 overflow-hidden">
+            
+            {/* 1. Logo centrado exactamente en el medio */}
+            <div className="flex-1 flex items-center justify-center">
                 <img 
                     src="/inkachipslogo.png" 
-                    alt="Logo Sodimac" 
-                    className="w-64 h-auto drop-shadow-md" 
+                    alt="Logo Inka Chips" 
+                    className="w-72 h-auto drop-shadow-2xl" 
                 />
             </div>
 
-            {/* Botón con el color específico #65c7c3 */}
-            <button
-                onClick={goToStores}
-                style={{ backgroundColor: '#65c7c3' }}
-                className="flex items-center gap-2 px-3 py-3 rounded-full text-white font-bold text-xl shadow-lg transform transition-transform active:scale-95 hover:brightness-110 mt-20"
-            >
-                <Settings size={24} />
+            {/* 2. Navbar Inferior con los dos botones */}
+            <div className="absolute bottom-10 w-full flex justify-center items-center gap-6 px-4">
                 
-            </button>
+                {/* Botón de Registros (3 rayas) */}
+                <button
+                    onClick={goToRegistros}
+                    style={{ backgroundColor: '#65c7c3' }}
+                    className="flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transform transition-all active:scale-90 hover:brightness-110"
+                    title="Registros"
+                >
+                    <Menu size={28} />
+                </button>
+
+                {/* Botón de Configuración (Settings) */}
+                <button
+                    onClick={goToStores}
+                    style={{ backgroundColor: '#65c7c3' }}
+                    className="flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transform transition-all active:scale-90 hover:brightness-110"
+                    title="Configuración"
+                >
+                    <Settings size={28} />
+                </button>
+            </div>
+
         </div>
     );
 };
