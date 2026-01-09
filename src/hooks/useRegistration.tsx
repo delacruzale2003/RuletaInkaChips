@@ -9,7 +9,7 @@ export interface SpinResult {
     registerId?: string;
 }
 
-// 1. Actualizamos la interfaz para incluir los setters y valores del formulario
+// 1. Interfaz actualizada: phoneNumber -> email
 interface RouletteHook {
     loading: boolean;
     message: string;
@@ -18,10 +18,10 @@ interface RouletteHook {
     // Campos del formulario
     name: string;
     dni: string;
-    phoneNumber: string;
+    email: string; // <--- CAMBIADO
     setName: (val: string) => void;
     setDni: (val: string) => void;
-    setPhoneNumber: (val: string) => void;
+    setEmail: (val: string) => void; // <--- CAMBIADO
     // Acción
     handleSpin: () => Promise<SpinResult>; 
 }
@@ -32,15 +32,15 @@ export const useRegistration = (): RouletteHook => {
     const [message, setMessage] = useState("");
     const [storeName, setStoreName] = useState("");
     
-    // === NUEVOS ESTADOS PARA EL FORMULARIO ===
+    // === ESTADOS DEL FORMULARIO ACTUALIZADOS ===
     const [name, setName] = useState("");
     const [dni, setDni] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const [email, setEmail] = useState(""); // <--- CAMBIADO
 
     // === HOOKS DE ROUTER ===
     const { storeId } = useParams<RouteParams>();
 
-    // === OBTENER INFO DE LA TIENDA AL CARGAR (Sin cambios) ===
+    // === OBTENER INFO DE LA TIENDA ===
     useEffect(() => {
         const fetchStoreInfo = async () => {
             if (!storeId) return;
@@ -64,16 +64,16 @@ export const useRegistration = (): RouletteHook => {
         fetchStoreInfo();
     }, [storeId]);
 
-    // === ACCIÓN DE REGISTRAR Y GIRAR (ACTUALIZADO) ===
+    // === ACCIÓN DE REGISTRAR Y GIRAR ===
     const handleSpin = async (): Promise<SpinResult> => {
         setMessage("");
         
-        // 1. Validación local antes de enviar
+        // 1. Validación local (email incluido)
         if (!storeId) {
             setMessage("Error: No se identificó la tienda.");
             return { success: false };
         }
-        if (!name.trim() || !dni.trim() || !phoneNumber.trim()) {
+        if (!name.trim() || !dni.trim() || !email.trim()) {
             setMessage("⚠️ Por favor completa todos los datos para jugar.");
             return { success: false };
         }
@@ -81,17 +81,16 @@ export const useRegistration = (): RouletteHook => {
         setLoading(true);
 
         try {
-            // 2. Llamada al nuevo endpoint '/register-spin'
+            // 2. Llamada al endpoint enviando 'email'
             const res = await fetch(`${API_URL}/api/v1/register-spin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
                     storeId, 
                     campaign: CAMPAIGN_ID,
-                    // Enviamos los datos del formulario
                     name, 
                     dni, 
-                    phoneNumber 
+                    email // <--- CAMBIADO
                 }),
             });
             
@@ -121,10 +120,9 @@ export const useRegistration = (): RouletteHook => {
         message,
         storeId,
         storeName,
-        // Retornamos los estados y setters para usarlos en los inputs
         name, setName,
         dni, setDni,
-        phoneNumber, setPhoneNumber,
+        email, setEmail, // <--- CAMBIADO
         handleSpin,
     };
 };
