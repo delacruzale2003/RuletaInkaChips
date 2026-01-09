@@ -29,7 +29,7 @@ const Home: React.FC = () => {
                 <img 
                     src="/inkachipslogo.png" 
                     alt="Logo Inka Chips" 
-                    className="w-72 h-auto drop-shadow-2xl" 
+                    className="w-55 h-auto drop-shadow-2xl" 
                 />
             </div>
 
@@ -40,7 +40,7 @@ const Home: React.FC = () => {
                 <button
                     onClick={goToRegistros}
                     style={{ backgroundColor: '#65c7c3' }}
-                    className="flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transform transition-all active:scale-90 hover:brightness-110"
+                    className="flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transform transition-all active:scale-90 hover:brightness-70"
                     title="Registros"
                 >
                     <Menu size={28} />
@@ -50,7 +50,7 @@ const Home: React.FC = () => {
                 <button
                     onClick={goToStores}
                     style={{ backgroundColor: '#65c7c3' }}
-                    className="flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transform transition-all active:scale-90 hover:brightness-110"
+                    className="flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transform transition-all active:scale-90 hover:brightness-70"
                     title="Configuración"
                 >
                     <Settings size={28} />
