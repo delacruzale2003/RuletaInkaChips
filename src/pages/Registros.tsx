@@ -22,6 +22,7 @@ interface Registro {
     name: string;
     phone_number: string;
     dni: string;
+    email: string; // <--- Nuevo Campo
     campaign: string;
     status: string;
     created_at: string;
@@ -36,15 +37,13 @@ interface LatestRegister extends Registro {
     photo_url: string;
 }
 
-export default function Registross() {
+export default function Registros() {
     const [registros, setRegistros] = useState<LatestRegister[]>([]);
     const [modalFoto, setModalFoto] = useState<string | null>(null);
     const [cargando, setCargando] = useState(false);
 
     const campaignName = import.meta.env.VITE_CAMPAIGN || 'CAMPAÑA_DEFAULT';
-
     const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
     const apiAdmin = `${API_BASE_URL}/api/v1/admin`;
 
     const [tiendaSeleccionada, setTiendaSeleccionada] = useState<string>('');
@@ -68,13 +67,11 @@ export default function Registross() {
 
                 const res = await fetch(`${apiAdmin}/registers/latest?${queryParams.toString()}`, { signal });
 
-                // Si la petición fue cancelada, ignoramos la respuesta
                 if (signal.aborted) return;
 
                 if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
 
                 const result = await res.json();
-
                 setRegistros(result.data || []);
 
             } catch (err: any) {
@@ -125,13 +122,13 @@ export default function Registross() {
             const res = await fetch(`${apiAdmin}/registers/latest?campaign=${campaignName}&limit=99999`);
             const result = await res.json();
 
-            // 💡 MODIFICADO: Se eliminaron Teléfono y DNI del mapeo
+            // 💡 ACTUALIZADO: Incluye DNI y Email
             const filas = (result.data || []).map((r: LatestRegister) => ({
                 'ID Registro': r.id, 
                 'Tienda': r.store_name ?? 'Desconocida', 
-                //'Nombre Cliente': r.name ?? '—',
-                // 'Teléfono': r.phone_number ?? '—',  <-- Eliminado
-                // 'DNI': r.dni ?? '—',                <-- Eliminado
+                'Nombre Cliente': r.name ?? '—',
+                'DNI': r.dni ?? '—',
+                'Email': r.email ?? '—', // <--- Nuevo en Excel
                 'Estado': r.prize_name ? 'GANADOR' : 'NO GANÓ',
                 'Premio': r.prize_name ?? '—', 
                 'Fecha Registro': convertirFechaPeru(r.created_at),
@@ -157,12 +154,12 @@ export default function Registross() {
             const res = await fetch(`${apiAdmin}/registers/latest?campaign=${campaignName}&storeId=${tiendaSeleccionada}&limit=99999`);
             const result = await res.json();
 
-            // 💡 MODIFICADO: Se eliminaron Teléfono y DNI del mapeo
+            // 💡 ACTUALIZADO: Incluye DNI y Email
             const filas = (result.data || []).map((r: LatestRegister) => ({
                 'Tienda': r.store_name, 
-                //'Cliente': r.name, 
-                // 'Teléfono': r.phone_number,  <-- Eliminado
-                // 'DNI': r.dni,                <-- Eliminado
+                'Cliente': r.name ?? '—', 
+                'DNI': r.dni ?? '—',
+                'Email': r.email ?? '—', // <--- Nuevo en Excel
                 'Premio': r.prize_name ?? '—', 
                 'Fecha Registro': convertirFechaPeru(r.created_at),
             }));
@@ -180,7 +177,7 @@ export default function Registross() {
     // --- RENDERIZADO ---
     return (
         <div className="p-4 bg-black min-h-screen">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-7xl mx-auto"> {/* Aumenté un poco el ancho para que quepan las nuevas columnas */}
                 
                 {/* CABECERA Y DESCRIPCIÓN */}
                 <div className="mb-8">
@@ -196,7 +193,6 @@ export default function Registross() {
 
                 {/* BOTONES DE DESCARGA */}
                 <div className="flex flex-col md:flex-row gap-4 mb-8 flex-wrap justify-center md:justify-start">
-                    {/* Botón Negro (Campaña Completa) - Mantenemos estilo oscuro para contraste con la página */}
                     <button
                         onClick={handleDescargarCampaña}
                         className="flex items-center justify-center gap-3 px-5 py-3 bg-gray-800 text-white border border-gray-700 rounded-xl hover:bg-gray-700 hover:border-gray-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 w-full md:w-auto group"
@@ -205,7 +201,6 @@ export default function Registross() {
                         <span className="font-medium">Descargar Campaña Completa</span>
                     </button>
 
-                    {/* Botón Cyan (Tienda Seleccionada) */}
                     <button
                         onClick={handleDescargarTienda}
                         disabled={!tiendaSeleccionada}
@@ -253,10 +248,12 @@ export default function Registross() {
                             >
                                 <table className="min-w-full divide-y divide-gray-200">
                                     {/* Cabecera Gris Clara */}
-                                    <thead className="bg-gray-100">
+                                    <thead className="bg-gray-50">
                                         <tr>
                                             <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Tienda</th>
-                                            
+                                            <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Cliente</th>
+                                            <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">DNI</th>
+                                            <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
                                             <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Premio</th>
                                             <th scope="col" className="px-6 py-4 text-left md:text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Fecha</th>
                                         </tr>
@@ -265,30 +262,44 @@ export default function Registross() {
                                     <tbody className="bg-white divide-y divide-gray-100">
                                         {registros.length === 0 ? (
                                             <tr>
-                                                <td colSpan={4} className="px-6 py-8 text-center text-gray-500 italic">
+                                                <td colSpan={6} className="px-6 py-8 text-center text-gray-500 italic">
                                                     No se encontraron registros para esta selección.
                                                 </td>
                                             </tr>
                                         ) : registros.map((r) => (
                                             <tr key={r.id} className="hover:bg-gray-50 transition-colors duration-150">
+                                                
                                                 <td className="px-6 py-4 whitespace-nowrap text-left md:text-center">
                                                     <div className="text-sm font-semibold text-gray-800">{r.store_name ?? <span className="text-red-500">Desconocida</span>}</div>
                                                 </td>
                                                 
                                                 <td className="px-6 py-4 whitespace-nowrap text-left md:text-center">
+                                                    <div className="text-sm text-gray-600 font-medium">{r.name ?? '-'}</div>
+                                                </td>
+
+                                                {/* COLUMNA DNI */}
+                                                <td className="px-6 py-4 whitespace-nowrap text-left md:text-center">
+                                                    <div className="text-sm text-gray-500 font-mono">{r.dni ?? '-'}</div>
+                                                </td>
+
+                                                {/* COLUMNA EMAIL */}
+                                                <td className="px-6 py-4 whitespace-nowrap text-left md:text-center">
+                                                    <div className="text-sm text-gray-500">{r.email ?? '-'}</div>
+                                                </td>
+                                                
+                                                <td className="px-6 py-4 whitespace-nowrap text-left md:text-center">
                                                     {r.prize_name ? (
-                                                        // Badge Ganador: Fondo Cyan Sólido con texto blanco
                                                         <span className="bg-[#5dc4c0] text-white px-3 py-1 rounded-full text-xs font-bold inline-block shadow-sm">
                                                             {r.prize_name}
                                                         </span>
                                                     ) : (
-                                                        // Badge No Ganó: Gris claro
                                                         <span className="bg-gray-100 text-gray-400 px-3 py-1 rounded-full text-xs font-medium inline-block border border-gray-200">
                                                             No ganó
                                                         </span>
                                                     )}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-left md:text-center text-gray-900 text-sm font-mont-bold">
+                                                
+                                                <td className="px-6 py-4 whitespace-nowrap text-left md:text-center text-gray-400 text-xs font-mono">
                                                     {convertirFechaPeru(r.created_at)}
                                                 </td>
                                             </tr>
